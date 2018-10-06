@@ -1,4 +1,4 @@
-package com.lmf.house2.model;
+package com.lmf.house.model;
 
 public class HousePriceModel {
 	public static final int STATUS_DEFAULT=0;

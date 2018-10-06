@@ -1,8 +1,8 @@
-package com.lmf.house2;
+package com.lmf.house.api;
 
 public class HouseConfig {
-	public static final String HOST = "http://m.api.lianjia.com";
-	public static final String PATH = "/house/ershoufang/searchv2";
+	public static final String HOST = "http://app.api.ke.com";
+	public static final String PATH = "/house/ershoufang/searchv4";
 	public static final String CHANNEL = "channel";
 	public static final String CITY_ID = "city_id";
 	public static final String LIMIT_COUNT = "limit_count";
@@ -32,7 +32,7 @@ public class HouseConfig {
 	public static void buildUrl(HouseUrl url) {
 		url.url = HouseConfig.buildBaseURL() + "&" + HouseConfig.LIMIT_OFFSET + "=" + url.limitOffset + "&"
 				+ HouseConfig.ACCESS_TOKEN + "=" + ACCESS_TOKEN_TEXT + "&" + HouseConfig.UTM_SOURCE + "="
-				+ UTM_SOURCE_TEXT + "&" + DEVICE_ID + "=" + url.deviceId;
+				+ UTM_SOURCE_TEXT + "&" + DEVICE_ID + "=" + url.deviceId+ "&isSuggestion=0&condition=&isHotSearch=0&hasRecommend=0&isHistory=0";
 	}
 
 }

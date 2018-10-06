@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.lmf.house2;
+package com.lmf.house.api;
 
 import java.io.IOException;
 

@@ -1,4 +1,4 @@
-package com.lmf.house2;
+package com.lmf.house.api;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -23,7 +23,7 @@ import org.apache.http.util.EntityUtils;
 import com.google.gson.Gson;
 import com.lmf.common.Log;
 import com.lmf.house.HouseCrawler;
-import com.lmf.house2.model.SearchModel;
+import com.lmf.house.model.SearchModel;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
@@ -63,36 +63,36 @@ public class HouseMain {
 		int max = getMaxCount(pageFetcher);
 		int count = max / numberOfCrawlers + 1;
 		Log.e("max is " + max);
-		if (max < 1) {
-			Log.e("error max:" + max);
-			System.exit(0);
-			return;
-		}
-		List<APIRunner> runnerList = new ArrayList<APIRunner>();
-		for (int i = 0; i < numberOfCrawlers; i++) {
-			APIRunner runner = new APIRunner(i * count, (i + 1) * count, HouseConfig.REQUEST_COUNT, pageFetcher);
-			runner.start();
-			runnerList.add(runner);
-		}
-
-		boolean isRunning = true;
-		while (isRunning) {
-			boolean isAlive = false;
-			for (APIRunner runner : runnerList) {
-				isAlive = runner.isAlive() || isAlive;
-			}
-			if (isAlive) {
-				try {
-					Thread.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-			} else {
-				isRunning = false;
-			}
-		}
+//		if (max < 1) {
+//			Log.e("error max:" + max);
+//			System.exit(0);
+//			return;
+//		}
+//		List<APIRunner> runnerList = new ArrayList<APIRunner>();
+//		for (int i = 0; i < numberOfCrawlers; i++) {
+//			APIRunner runner = new APIRunner(i * count, (i + 1) * count, HouseConfig.REQUEST_COUNT, pageFetcher);
+//			runner.start();
+//			runnerList.add(runner);
+//		}
+//
+//		boolean isRunning = true;
+//		while (isRunning) {
+//			boolean isAlive = false;
+//			for (APIRunner runner : runnerList) {
+//				isAlive = runner.isAlive() || isAlive;
+//			}
+//			if (isAlive) {
+//				try {
+//					Thread.sleep(5000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//			} else {
+//				isRunning = false;
+//			}
+//		}
 
 		String endTime = df.format(new Date());
 		Log.e("end crawler:" + endTime + ",start crawler:" + startTime );
@@ -118,6 +118,7 @@ public class HouseMain {
 
 	private static String getPageString(APIFetcher pageFetcher, HouseUrl url) throws Exception {
 		String data = null;
+		Log.i("url:"+url.url);
 		APIFetchResult result = pageFetcher.fetchPage(url.url);
 		data = EntityUtils.toString(result.getEntity());
 		return data;
@@ -125,6 +126,7 @@ public class HouseMain {
 
 	private static SearchModel parseString(Gson gson, String data) throws Exception {
 		SearchModel model = null;
+		Log.i(data);
 		model = gson.fromJson(data, SearchModel.class);
 		return model;
 

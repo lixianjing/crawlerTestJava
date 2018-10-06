@@ -1,4 +1,4 @@
-package com.lmf.house2;
+package com.lmf.house.api;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,8 +9,8 @@ import com.google.common.collect.ImmutableBiMap.Builder;
 import com.google.gson.Gson;
 import com.lmf.common.DBHelper;
 import com.lmf.common.Utils;
-import com.lmf.house2.model.HouseInfoModel;
-import com.lmf.house2.model.HousePriceModel;
+import com.lmf.house.model.HouseInfoModel;
+import com.lmf.house.model.HousePriceModel;
 
 public class HouseAPIDBManager {
 

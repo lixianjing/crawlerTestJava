@@ -1,4 +1,4 @@
-package com.lmf.house2.model;
+package com.lmf.house.model;
 
 import java.util.List;
 

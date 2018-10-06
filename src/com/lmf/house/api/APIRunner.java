@@ -1,4 +1,4 @@
-package com.lmf.house2;
+package com.lmf.house.api;
 
 import java.util.UUID;
 
@@ -6,9 +6,9 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.lmf.common.Log;
-import com.lmf.house2.model.HouseInfoModel;
-import com.lmf.house2.model.HousePriceModel;
-import com.lmf.house2.model.SearchModel;
+import com.lmf.house.model.HouseInfoModel;
+import com.lmf.house.model.HousePriceModel;
+import com.lmf.house.model.SearchModel;
 
 public class APIRunner extends Thread {
 

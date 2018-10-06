@@ -1,4 +1,4 @@
-package com.lmf.house2;
+package com.lmf.house.api;
 
 import java.util.UUID;
 
