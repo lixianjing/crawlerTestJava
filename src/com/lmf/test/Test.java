@@ -15,7 +15,8 @@ public class Test {
 
 	public static void main(String[] args) throws Exception {
 
-		System.out.println("hello world");
+		
+		System.out.println("hello world"+System.getProperty("user.dir"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
 		

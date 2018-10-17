@@ -21,12 +21,12 @@ public class HouseController {
 		int politenessDelay = 100;
 
 		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(crawlStorageFolder);
-		// 设置搜索深度
+		config.setCrawlStorageFolder(System.getProperty("user.dir") + crawlStorageFolder);
+		// 椤甸潰娣卞害
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-		// 设置搜索文件个数
+		// 椤甸潰涓暟
 		config.setMaxPagesToFetch(maxPagesToFetch);
-		// 延迟策略
+		// 寤惰繜绛栫暐
 		config.setPolitenessDelay(politenessDelay);
 		onCreate();
 		/*
@@ -58,18 +58,18 @@ public class HouseController {
 
 	private static void onCreate() {
 		startStamp = System.currentTimeMillis();
-		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
 		Log.e("<<<<<<<<<<");
-		Log.e("start crawler:" + startTime);// new Date()为获取当前系统时间
-//		HouseDBManager.init();
+		Log.e("start crawler:" + startTime);
+		// HouseDBManager.init();
 	}
 
 	private static void onDestory() {
 		long spendTime = System.currentTimeMillis() - startStamp;
 		String endTime = df.format(new Date());
 		Log.e("end crawler:" + endTime + ",spend:" + spendTime / 1000 / 60 + "min,total visit:" + HouseCrawler.count);
-//		HouseDBManager.release();
+		// HouseDBManager.release();
 		Log.e(">>>>>>>>>>");
 		Log.flush();
 	}

@@ -18,57 +18,33 @@
 package com.lmf.house.api;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-import javax.net.ssl.SSLContext;
-
-import edu.uci.ics.crawler4j.crawler.authentication.NtAuthInfo;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.ssl.SSLContexts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import edu.uci.ics.crawler4j.crawler.Configurable;
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
-import edu.uci.ics.crawler4j.crawler.authentication.AuthInfo;
-import edu.uci.ics.crawler4j.crawler.authentication.BasicAuthInfo;
-import edu.uci.ics.crawler4j.crawler.authentication.FormAuthInfo;
 import edu.uci.ics.crawler4j.crawler.exceptions.PageBiggerThanMaxSizeException;
 import edu.uci.ics.crawler4j.url.URLCanonicalizer;
-import edu.uci.ics.crawler4j.url.WebURL;
 
 /**
  * @author Yasser Ganjisaffar
@@ -102,19 +78,18 @@ public class APIFetcher extends Configurable {
 		clientBuilder.setConnectionManager(connectionManager);
 		clientBuilder.setUserAgent(config.getUserAgentString());
 		clientBuilder.setDefaultHeaders(config.getDefaultHeaders());
-		  if (config.getProxyHost() != null) {
-		      if (config.getProxyUsername() != null) {
-		        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
-		        credentialsProvider.setCredentials(new AuthScope(config.getProxyHost(), config.getProxyPort()),
-		                                           new UsernamePasswordCredentials(config.getProxyUsername(),
-		                                                                           config.getProxyPassword()));
-		        clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
-		      }
+		if (config.getProxyHost() != null) {
+			if (config.getProxyUsername() != null) {
+				BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+				credentialsProvider.setCredentials(new AuthScope(config.getProxyHost(), config.getProxyPort()),
+						new UsernamePasswordCredentials(config.getProxyUsername(), config.getProxyPassword()));
+				clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
+			}
 
-		      HttpHost proxy = new HttpHost(config.getProxyHost(), config.getProxyPort());
-		      clientBuilder.setProxy(proxy);
-		      logger.debug("Working through Proxy: {}", proxy.getHostName());
-		    }
+			HttpHost proxy = new HttpHost(config.getProxyHost(), config.getProxyPort());
+			clientBuilder.setProxy(proxy);
+			logger.debug("Working through Proxy: {}", proxy.getHostName());
+		}
 		httpClient = clientBuilder.build();
 
 		if (connectionMonitorThread == null) {
@@ -208,8 +183,8 @@ public class APIFetcher extends Configurable {
 	}
 
 	/**
-	 * Creates a new HttpUriRequest for the given url. The default is to create
-	 * a HttpGet without any further configuration. Subclasses may override this
+	 * Creates a new HttpUriRequest for the given url. The default is to create a
+	 * HttpGet without any further configuration. Subclasses may override this
 	 * method and provide their own logic.
 	 *
 	 * @param url
@@ -223,11 +198,11 @@ public class APIFetcher extends Configurable {
 		request.addHeader("Accept-Language", "zh-CN,zh;q=0.8,en;q=0.6,zh-TW;q=0.4");
 		request.addHeader("User-Agent",
 				"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.112 Safari/537.36");
-		
+
 		request.addHeader("Host", "m.api.lianjia.com");
 		request.addHeader("Connection", "keep-alive");
 		request.addHeader("Upgrade-Insecure-Requests", "1");
-		
+
 		return request;
 	}
 
