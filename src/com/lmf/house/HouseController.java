@@ -29,6 +29,7 @@ public class HouseController {
 		// 延迟策略
 		config.setPolitenessDelay(politenessDelay);
 		onCreate();
+	
 		/*
 		 * Instantiate the controller for this crawl.
 		 */
@@ -50,6 +51,7 @@ public class HouseController {
 		 * reach the line after this only when crawling is finished.
 		 */
 		controller.start(HouseCrawler.class, numberOfCrawlers);
+		
 		onDestory();
 	}
 

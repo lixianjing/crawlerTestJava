@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
+import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.google.gson.Gson;
 
 public class Test {
 
@@ -19,8 +22,12 @@ public class Test {
 		System.out.println("hello world"+System.getProperty("user.dir"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
+		Gson gson=new Gson();
+		System.out.println("hello world:"+gson);
 		
-		writeFile("test.txt","time:" + startTime+"\n");
+
+		
+//		writeFile("test.txt","time:" + startTime+"\n");
 	}
 
 	public static void writeFile(String file, String content) {
