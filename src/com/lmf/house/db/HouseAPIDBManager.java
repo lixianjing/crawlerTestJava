@@ -1,4 +1,4 @@
-package com.lmf.house.api;
+package com.lmf.house.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,9 +14,9 @@ import com.lmf.house.model.HousePriceModel;
 
 public class HouseAPIDBManager {
 
-	public static final String JDBC_URL = "jdbc:MySQL://127.0.0.1:3306/crawler";// Êý¾Ý¿â
-	public static final String USER = "crawler"; // ÓÃ»§Ãû
-	public static final String PASSWORD = "shui"; // ÃÜÂë
+	public static final String JDBC_URL = "jdbc:MySQL://127.0.0.1:3306/crawler";// ï¿½ï¿½ï¿½Ý¿ï¿½
+	public static final String USER = "crawler"; // ï¿½Ã»ï¿½ï¿½ï¿½
+	public static final String PASSWORD = "shui"; // ï¿½ï¿½ï¿½ï¿½
 
 	public static final String HOUSE_INFO_API_TABLE = "house_info_api";
 

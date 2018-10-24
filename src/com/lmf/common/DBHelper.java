@@ -14,7 +14,7 @@ import java.sql.Statement;
 
 public class DBHelper {
 
-	public static final String DRIVER = "com.mysql.jdbc.Driver"; // 数据库驱动
+	public static final String DRIVER = "com.mysql.jdbc.Driver"; 
 
 
 	private static DBHelper mInstance;
@@ -39,14 +39,14 @@ public class DBHelper {
 		mConnection = getConnection(url, user, pw);
 	}
 
-	// 此方法为获取数据库连接
+
 	private Connection getConnection(String url, String user, String pw) {
 
 		Connection conn = null;
 		try {
-			String driver = DRIVER; // 数据库驱动
+			String driver = DRIVER; 
 
-			Class.forName(driver); // 加载数据库驱动
+			Class.forName(driver); 
 			if (null == conn) {
 				conn = DriverManager.getConnection(url, user, pw);
 			}
@@ -62,13 +62,6 @@ public class DBHelper {
 		return conn;
 	}
 
-	/**
-	 * 
-	 * 增删改【Add、Del、Update】
-	 * 
-	 * @param sql
-	 * @return int
-	 */
 
 	public int executeNonQuery(String sql) {
 
@@ -87,14 +80,7 @@ public class DBHelper {
 		return result;
 	}
 
-	/**
-	 * 
-	 * 增删改【Add、Delete、Update】
-	 * 
-	 * @param sql
-	 * @param obj
-	 * @return int
-	 */
+
 
 	public int executeNonQuery(String sql, Object... obj) {
 
@@ -117,14 +103,7 @@ public class DBHelper {
 		return result;
 	}
 
-	/**
-	 * 
-	 * 查【Query】
-	 * 
-	 * @param sql
-	 * @return ResultSet
-	 * 
-	 */
+
 
 	public ResultSet executeQuery(String sql) {
 		Statement stmt = null;
@@ -140,15 +119,7 @@ public class DBHelper {
 		return rs;
 	}
 
-	/**
-	 * 
-	 * 查【Query】
-	 * 
-	 * @param sql
-	 * @param obj
-	 * @return ResultSet
-	 * 
-	 */
+
 
 	public ResultSet executeQuery(String sql, Object... obj) {
 		PreparedStatement pstmt = null;
@@ -168,14 +139,6 @@ public class DBHelper {
 
 	}
 
-	/**
-	 * 
-	 * 判断记录是否存在
-	 *
-	 * @param sql
-	 * @return Boolean
-	 * 
-	 */
 
 	public Boolean isExist(String sql) {
 		ResultSet rs = null;
@@ -200,15 +163,6 @@ public class DBHelper {
 
 	}
 
-	/**
-	 * 
-	 * 判断记录是否存在
-	 *
-	 * @param sql
-	 * @return Boolean
-	 * 
-	 */
-
 	public Boolean isExist(String sql, Object... obj) {
 		ResultSet rs = null;
 		try {
@@ -231,14 +185,6 @@ public class DBHelper {
 		}
 	}
 
-	/**
-	 * 
-	 * 获取查询记录的总行数
-	 * 
-	 * @param sql
-	 * @return int
-	 * 
-	 */
 
 	public int getCount(String sql) {
 		int result = 0;
@@ -256,15 +202,6 @@ public class DBHelper {
 		return result;
 	}
 
-	/**
-	 * 
-	 * 获取查询记录的总行数
-	 *
-	 * @param sql
-	 * @param obj
-	 * @return int
-	 * 
-	 */
 
 	public int getCount(String sql, Object... obj) {
 		int result = 0;
@@ -281,13 +218,6 @@ public class DBHelper {
 		return result;
 	}
 
-	/**
-	 * 
-	 * 释放【ResultSet】资源
-	 *
-	 * @param rs
-	 * 
-	 */
 
 	public void free(ResultSet rs) {
 		try {
@@ -299,13 +229,6 @@ public class DBHelper {
 		}
 	}
 
-	/**
-	 * 
-	 * 释放【Statement】资源
-	 * 
-	 * @param st
-	 * 
-	 */
 
 	public void free(Statement st) {
 		try {
@@ -317,13 +240,6 @@ public class DBHelper {
 		}
 	}
 
-	/**
-	 * 
-	 * 释放【Connection】资源
-	 *
-	 * @param conn
-	 * 
-	 */
 
 	public void free(Connection conn) {
 		try {

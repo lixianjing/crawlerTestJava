@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.lmf.common.Log;
+import com.lmf.house.db.HouseJsonDBManager;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -29,7 +30,7 @@ public class HouseController {
 		// 延迟策略
 		config.setPolitenessDelay(politenessDelay);
 		onCreate();
-	
+
 		/*
 		 * Instantiate the controller for this crawl.
 		 */
@@ -51,7 +52,7 @@ public class HouseController {
 		 * reach the line after this only when crawling is finished.
 		 */
 		controller.start(HouseCrawler.class, numberOfCrawlers);
-		
+
 		onDestory();
 	}
 
@@ -64,14 +65,14 @@ public class HouseController {
 		String startTime = df.format(new Date());
 		Log.e("<<<<<<<<<<");
 		Log.e("start crawler:" + startTime);
-		// HouseDBManager.init();
+		HouseJsonDBManager.init();
 	}
 
 	private static void onDestory() {
 		long spendTime = System.currentTimeMillis() - startStamp;
 		String endTime = df.format(new Date());
 		Log.e("end crawler:" + endTime + ",spend:" + spendTime / 1000 / 60 + "min,total visit:" + HouseCrawler.count);
-		// HouseDBManager.release();
+		HouseJsonDBManager.release();
 		Log.e(">>>>>>>>>>");
 		Log.flush();
 	}

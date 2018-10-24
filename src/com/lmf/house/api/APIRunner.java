@@ -6,6 +6,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.gson.Gson;
 import com.lmf.common.Log;
+import com.lmf.house.db.HouseAPIDBManager;
 import com.lmf.house.model.HouseInfoModel;
 import com.lmf.house.model.HousePriceModel;
 import com.lmf.house.model.SearchModel;

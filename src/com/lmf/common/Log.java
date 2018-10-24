@@ -13,9 +13,11 @@ import java.util.Date;
 public class Log {
 
 	private static final long MAX_BUFFER = 1024 * 1024;
+	private static final String PATH = "logs";
 
-	private static final SimpleDateFormat df = new SimpleDateFormat("yy_MM_dd_HH");// 设置日期格式
+	private static final SimpleDateFormat df = new SimpleDateFormat("yy_MM_dd_HH");
 	private static StringBuffer builder = new StringBuffer();
+	private static boolean isInit = false;
 
 	public static void i(String content) {
 		System.out.println(content);
@@ -29,12 +31,27 @@ public class Log {
 
 	}
 
-	public static void flush() {
+	public static void init() {
+		try {
+			File file = new File(PATH);
+			if (!file.exists()) {
+				file.mkdirs();
+			}
+			isInit = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
+	}
+
+	public static void flush() {
+		if (!isInit) {
+			return;
+		}
 		if (builder == null || builder.length() == 0) {
 			return;
 		}
-		writeFile("logs/log" + df.format(new Date()), builder.toString());
+		writeFile("log" + df.format(new Date()), builder.toString());
 		builder.delete(0, builder.length() - 1);
 	}
 
@@ -46,9 +63,12 @@ public class Log {
 	}
 
 	private static void writeFile(String file, String content) {
+		if (!isInit) {
+			return;
+		}
 		RandomAccessFile raf = null;
 		try {
-			raf = new RandomAccessFile(file, "rw");
+			raf = new RandomAccessFile(PATH + "/" + file, "rw");
 			long fileLength = raf.length();
 			raf.seek(fileLength);
 			raf.writeBytes(content);
