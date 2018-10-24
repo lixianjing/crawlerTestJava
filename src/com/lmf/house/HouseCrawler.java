@@ -84,7 +84,7 @@ public class HouseCrawler extends WebCrawler {
 				}
 				HouseJsonDBManager.insertCrawler(model);
 				HouseJsonDBManager.insertHouse(houseModel);
-				SaltUtils.writeSalt(url);
+				SaltUtils.insertSalt(url);
 				// System.out.println("model:>>>>>>>>" + model.toString());
 				// System.out.println("houseModel:>>>>>>>>" + houseModel.toString());
 

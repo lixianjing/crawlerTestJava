@@ -8,9 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.lmf.common.Log;
 import com.lmf.house.db.HouseJsonDBManager;
 
 public class SaltUtils {
+	private static final long ONE_DAY = 24 * 60 * 60 * 1000;
+	private static final int MAX_DB_COUNT = 25;
+
 	public static List<String> readSalt() {
 		List<String> list = new ArrayList<String>();
 		// from file;
@@ -26,7 +30,7 @@ public class SaltUtils {
 
 			while ((str = br.readLine()) != null) {
 				list.add(str);
-				System.out.println(str);
+				Log.i("file salt>>>" + str);
 			}
 			br.close();
 			reader.close();
@@ -53,12 +57,17 @@ public class SaltUtils {
 		}
 
 		// from db
-		list.addAll(HouseJsonDBManager.selectSalt());
+		List<String> dblist = HouseJsonDBManager.selectSalt();
+		if (dblist.size() > MAX_DB_COUNT) {
+			HouseJsonDBManager.deleteSalt(System.currentTimeMillis() - ONE_DAY);
+		}
+
+		list.addAll(dblist);
 		return list;
 
 	}
 
-	public static void writeSalt(String str) {
+	public static void insertSalt(String str) {
 
 		if (str == null || str.length() == 0) {
 			return;
@@ -67,40 +76,53 @@ public class SaltUtils {
 			return;
 		}
 
-		FileWriter writer = null;
-		BufferedWriter bw = null;
-
-		try {
-			// read file content from file
-			StringBuffer sb = new StringBuffer("");
-
-			writer = new FileWriter("resources/salt", true);
-			bw = new BufferedWriter(writer);
-
-			bw.write(str + "\n");
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (bw != null) {
-				try {
-					bw.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+		HouseJsonDBManager.insertSalt(str);
 
 	}
+
+	// public static void writeSalt(String str) {
+	//
+	// if (str == null || str.length() == 0) {
+	// return;
+	// }
+	// if (!isAddsalt()) {
+	// return;
+	// }
+	//
+	// FileWriter writer = null;
+	// BufferedWriter bw = null;
+	//
+	// try {
+	// // read file content from file
+	// StringBuffer sb = new StringBuffer("");
+	//
+	// writer = new FileWriter("resources/salt", true);
+	// bw = new BufferedWriter(writer);
+	//
+	// bw.write(str + "\n");
+	//
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// } finally {
+	// if (bw != null) {
+	// try {
+	// bw.close();
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// if (writer != null) {
+	// try {
+	// writer.close();
+	// } catch (IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	// }
+	//
+	// }
 
 	public static boolean isAddsalt() {
 		if (System.currentTimeMillis() % 100 == 11) {

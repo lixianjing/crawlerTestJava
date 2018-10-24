@@ -81,16 +81,18 @@ public class HouseJsonDBManager {
 			+ "	hasDaikan,uniqueAgent,showCart,hasFangjia,test_400_hide,newTax,uuid,loadingImg,qrImg,title,stamp"
 			+ "	) " + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-	public static final String SQL_INSERT_SALT = "INSERT INTO house_salt(url) " + "VALUES(?)";
+	public static final String SQL_INSERT_SALT = "INSERT INTO house_salt(url,stamp) " + "VALUES(?,?)";
 
 	public static final String SQL_SELECT_SALT = "select url from house_salt  order by _id ";
+
+	public static final String SQL_DELETE_SALT = "delete from house_salt where stamp < ?";
 
 	public static void main(String[] args) throws Exception {
 		init();
 		insertSalt("https://bj.lianjia.com/ershoufang/101103149423.html");
 		insertSalt("https://bj.lianjia.com/ershoufang/101103422024.html");
-		List list=selectSalt();
-		System.out.println(list.size()+"lll");
+		List list = selectSalt();
+		System.out.println(list.size() + "lll");
 		release();
 	}
 
@@ -126,7 +128,7 @@ public class HouseJsonDBManager {
 		if (url == null) {
 			return 0;
 		}
-		return DBHelper.getInstance().executeNonQuery(SQL_INSERT_SALT, url);
+		return DBHelper.getInstance().executeNonQuery(SQL_INSERT_SALT, url,System.currentTimeMillis());
 	}
 
 	public static List<String> selectSalt() {
@@ -137,13 +139,19 @@ public class HouseJsonDBManager {
 			while (rs.next()) {
 				list.add(rs.getString(1));
 			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
 			DBHelper.getInstance().free(rs);
 		}
+	
 		return list;
+	}
+
+	public static int deleteSalt(long stamp) {
+		return DBHelper.getInstance().executeNonQuery(SQL_DELETE_SALT,stamp);
 	}
 
 }
