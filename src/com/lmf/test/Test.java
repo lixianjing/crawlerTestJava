@@ -1,10 +1,13 @@
 package com.lmf.test;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -12,7 +15,9 @@ import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.lmf.common.Log;
@@ -31,21 +36,80 @@ public class Test {
 		// Log.e("eset");
 		// Log.e("xxx");
 		// Log.flush();
-
+		writeSalt("sdf");
+		writeSalt("saa");
+		addSalt();
+//		String str="https://bj.lianjia.com/ershoufang/101103243713.html?is_sem=1";
+//		System.out.println(checkUrl(str));
+//		
+		
 		// writeFile("test.txt","time:" + startTime+"\n");
 
-		String str = readToString("resources/one");
-
-		System.out.println("111:" + str);
-		System.out.println("222:" + catchData(str));
-
-		String json = catchJson(catchData(str));
-		
-		System.out.println("333:" + json);
-		System.out.println("444:" + catchHouseJsonModel(gson, json));
+//		String str = readToString("resources/one");
+//
+//		System.out.println("111:" + str);
+//		System.out.println("222:" + catchData(str));
+//
+//		String json = catchJson(catchData(str));
+//		
+//		System.out.println("333:" + json);
+//		System.out.println("444:" + catchHouseJsonModel(gson, json));
 
 	}
 
+	
+	
+	private static void writeSalt(String str) {
+		if (str == null || str.length() == 0) {
+			return;
+		}
+		FileWriter writer = null;
+		BufferedWriter bw = null;
+
+		try {
+			// read file content from file
+			StringBuffer sb = new StringBuffer("");
+
+			writer = new FileWriter("resources/salt",true);
+			bw = new BufferedWriter(writer);
+
+			bw.write(str+"\n");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (bw != null) {
+				try {
+					bw.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+	
+	
+	private static String checkUrl(String str) {
+		if(str==null) {
+			return null;
+		}
+		int index=str.indexOf('?');
+		if(index>0) {
+			str=str.substring(0, index);
+		}
+		return str;
+	}
+	
 	public static void writeFile(String file, String content) {
 		System.out.println("content:" + content);
 		RandomAccessFile raf = null;
@@ -143,5 +207,55 @@ public class Test {
 		}
 		return null;
 	}
+	
+	
+	
+	private static List<String> addSalt() {
+		List<String> list = new ArrayList<String>();
+		// from file;
+		FileReader reader = null;
+		BufferedReader br = null;
+		String str = null;
+		try {
+			// read file content from file
+			StringBuffer sb = new StringBuffer("");
+
+			reader = new FileReader("resources/salt");
+			br = new BufferedReader(reader);
+
+			while ((str = br.readLine()) != null) {
+				list.add(str);
+				System.out.println(str);
+			}
+			br.close();
+			reader.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (br != null) {
+				try {
+					br.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (reader != null) {
+				try {
+					reader.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		// from db
+
+		return list;
+
+	}
+	
 
 }

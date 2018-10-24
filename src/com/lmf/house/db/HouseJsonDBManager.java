@@ -2,6 +2,7 @@ package com.lmf.house.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,15 +18,15 @@ import com.lmf.house.model.ImageJsonModel;
 
 public class HouseJsonDBManager {
 
-//	 CREATE TABLE IF NOT EXISTS `house_crawler`(
-//	 `_id` INT UNSIGNED AUTO_INCREMENT,
-//	 `title` TEXT ,
-//	 `url` TEXT NOT NULL,
-//	 `status` INT ,
-//	 `content` TEXT ,
-//	 `stamp` LONG NOT NULL,
-//	 PRIMARY KEY ( `_id` )
-//	 )
+	// CREATE TABLE IF NOT EXISTS `house_crawler`(
+	// `_id` INT UNSIGNED AUTO_INCREMENT,
+	// `title` TEXT ,
+	// `url` TEXT NOT NULL,
+	// `status` INT ,
+	// `content` TEXT ,
+	// `stamp` LONG NOT NULL,
+	// PRIMARY KEY ( `_id` )
+	// )
 	// 插入demo
 	// INSERT INTO house_crawler(title,url,content,stamp)
 	// VALUES("test","no","content",123123123);
@@ -80,11 +81,16 @@ public class HouseJsonDBManager {
 			+ "	hasDaikan,uniqueAgent,showCart,hasFangjia,test_400_hide,newTax,uuid,loadingImg,qrImg,title,stamp"
 			+ "	) " + "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
+	public static final String SQL_INSERT_SALT = "INSERT INTO house_salt(url) " + "VALUES(?)";
+
+	public static final String SQL_SELECT_SALT = "select url from house_salt  order by _id ";
+
 	public static void main(String[] args) throws Exception {
 		init();
-		CrawlerJsonModel model = new CrawlerJsonModel("dsdfsdf", "sdf", "sdf");
-
-		insertCrawler(model);
+		insertSalt("https://bj.lianjia.com/ershoufang/101103149423.html");
+		insertSalt("https://bj.lianjia.com/ershoufang/101103422024.html");
+		List list=selectSalt();
+		System.out.println(list.size()+"lll");
 		release();
 	}
 
@@ -100,8 +106,8 @@ public class HouseJsonDBManager {
 		if (model == null) {
 			return 0;
 		}
-		return DBHelper.getInstance().executeNonQuery(SQL_INSERT_CRAWLER, model.title, model.url,model.status, model.content,
-				System.currentTimeMillis());
+		return DBHelper.getInstance().executeNonQuery(SQL_INSERT_CRAWLER, model.title, model.url, model.status,
+				model.content, System.currentTimeMillis());
 	}
 
 	public static int insertHouse(HouseJsonModel model) {
@@ -114,6 +120,30 @@ public class HouseJsonDBManager {
 				model.uniqueAgent, model.showCart, model.hasFangjia, model.test_400_hide, model.newTax, model.uuid,
 				model.loadingImg, model.qrImg, model.title, System.currentTimeMillis());
 
+	}
+
+	public static int insertSalt(String url) {
+		if (url == null) {
+			return 0;
+		}
+		return DBHelper.getInstance().executeNonQuery(SQL_INSERT_SALT, url);
+	}
+
+	public static List<String> selectSalt() {
+		List<String> list = new ArrayList();
+
+		ResultSet rs = DBHelper.getInstance().executeQuery(SQL_SELECT_SALT);
+		try {
+			while (rs.next()) {
+				list.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			DBHelper.getInstance().free(rs);
+		}
+		return list;
 	}
 
 }

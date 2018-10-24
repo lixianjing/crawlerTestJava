@@ -65,8 +65,8 @@ public class HouseCrawler extends WebCrawler {
 	 */
 	@Override
 	public void visit(Page page) {
-		String url = page.getWebURL().getURL();
-		if ((url.endsWith("html")) && (url.startsWith(HouseConstant.SEED_URL_WEB))) {
+		String url = checkUrl(page.getWebURL().getURL());
+		if (url != null) {
 			Log.i("URL: " + url);
 			if (page.getParseData() instanceof HtmlParseData) {
 				count++;
@@ -84,13 +84,30 @@ public class HouseCrawler extends WebCrawler {
 				}
 				HouseJsonDBManager.insertCrawler(model);
 				HouseJsonDBManager.insertHouse(houseModel);
-				System.out.println("model:>>>>>>>>" + model.toString());
-				System.out.println("houseModel:>>>>>>>>" + houseModel.toString());
+				SaltUtils.writeSalt(url);
+				// System.out.println("model:>>>>>>>>" + model.toString());
+				// System.out.println("houseModel:>>>>>>>>" + houseModel.toString());
 
 			}
 
 		}
 
+	}
+
+	private static String checkUrl(String str) {
+		if (str == null) {
+			return null;
+		}
+		if ((str.startsWith(HouseConstant.SEED_URL_WEB))) {
+			int index = str.indexOf('?');
+			if (index > 0) {
+				str = str.substring(0, index);
+			}
+			if (str.endsWith("html")) {
+				return str;
+			}
+		}
+		return null;
 	}
 
 	private String catchData(String rource) {

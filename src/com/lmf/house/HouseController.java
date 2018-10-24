@@ -1,7 +1,14 @@
 package com.lmf.house;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.lmf.common.Log;
 import com.lmf.house.db.HouseJsonDBManager;
@@ -83,10 +90,17 @@ public class HouseController {
 	 * these pages
 	 */
 	private static void addSeed(CrawlController controller) {
+		List<String> list = SaltUtils.readSalt();
+		for (String str : list) {
+			controller.addSeed(str);
+		}
 		controller.addSeed(HouseConstant.SEED_URL_WEB);
 		for (int i = 2; i < 100; i++) {
 			controller.addSeed(HouseConstant.SEED_URL_WEB_PAGE + i + "/");
 		}
 
 	}
+
+	
+	
 }
