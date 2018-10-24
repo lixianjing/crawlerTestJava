@@ -99,10 +99,8 @@ public class HouseCrawler extends WebCrawler {
 		}
 		try {
 			int begin = rource.lastIndexOf(RESOURCE_TAG_INDEX);
-			System.out.println("begin:" + begin);
 			if (begin > 0) {
 				int end = rource.indexOf(RESOURCE_TAG_END, begin);
-				System.out.println("end:" + end);
 				if (end > 0) {
 					return rource.substring(begin, end);
 				}
