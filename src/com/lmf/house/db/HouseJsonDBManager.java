@@ -89,11 +89,14 @@ public class HouseJsonDBManager {
 
 	public static void main(String[] args) throws Exception {
 		init();
-		insertSalt("https://bj.lianjia.com/ershoufang/101103149423.html");
-		insertSalt("https://bj.lianjia.com/ershoufang/101103422024.html");
-		List list = selectSalt();
-		System.out.println(list.size() + "lll");
+		insertSalt("https://bj.lianjia.com/ershoufang/bajiao1/?sug=%E5%85%AB%E8%A7%92");
+		insertSalt("https://bj.lianjia.com/ershoufang/rs%E5%8F%A4%E5%9F%8E/");
+		insertSalt("https://bj.lianjia.com/ershoufang/rs%E8%8B%B9%E6%9E%9C%E5%9B%AD/");
+		insertSalt("https://bj.lianjia.com/ershoufang/rs%E8%80%81%E5%B1%B1/");
+		insertSalt("https://bj.lianjia.com/ershoufang/rs%E5%9B%9E%E9%BE%99%E8%A7%82/");
+	
 		release();
+		System.out.println("done");
 	}
 
 	public static void init() {

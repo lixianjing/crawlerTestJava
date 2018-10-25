@@ -13,58 +13,15 @@ import com.lmf.house.db.HouseJsonDBManager;
 
 public class SaltUtils {
 	private static final long ONE_DAY = 24 * 60 * 60 * 1000;
-	private static final int MAX_DB_COUNT = 25;
+	private static final int MAX_DB_COUNT = 100;
 
 	public static List<String> readSalt() {
-		List<String> list = new ArrayList<String>();
-		// from file;
-		FileReader reader = null;
-		BufferedReader br = null;
-		String str = null;
-		try {
-			// read file content from file
-			StringBuffer sb = new StringBuffer("");
-
-			reader = new FileReader("resources/salt");
-			br = new BufferedReader(reader);
-
-			while ((str = br.readLine()) != null) {
-				list.add(str);
-				Log.i("file salt>>>" + str);
-			}
-			br.close();
-			reader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
 		// from db
 		List<String> dblist = HouseJsonDBManager.selectSalt();
 		if (dblist.size() > MAX_DB_COUNT) {
 			HouseJsonDBManager.deleteSalt(System.currentTimeMillis() - ONE_DAY);
 		}
-
-		list.addAll(dblist);
-		return list;
-
+		return dblist;
 	}
 
 	public static void insertSalt(String str) {
