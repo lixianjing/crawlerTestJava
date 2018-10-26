@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lmf.common.Log;
+import com.lmf.common.Utils;
 
 /**
  * This class is a singleton which obtains a list of TLDs (from online or a
@@ -23,7 +24,7 @@ import com.lmf.common.Log;
 public class TLDList {
 
 	private static final String TLD_NAMES_ONLINE_URL = "https://publicsuffix.org/list/effective_tld_names.dat";
-	private static final String TLD_NAMES_TXT_FILENAME = "resources/tld-names.txt";
+	private static final String TLD_NAMES_TXT_FILENAME = "com/lmf/res/tld-names.txt";
 	private static final Logger logger = LoggerFactory.getLogger(TLDList.class);
 
 	private static boolean onlineUpdate = false;
@@ -53,7 +54,7 @@ public class TLDList {
 		}
 
 		File f = new File(TLD_NAMES_TXT_FILENAME);
-		Log.e(">>>>>exit>>>" + (f.exists())+">>>:"+f.getAbsolutePath());
+		Log.e("TLD_NAMES_TXT_FILENAME>>>>>exist>>>" + (f.exists())+">>>:"+f.getAbsolutePath());
 		if (f.exists()) {
 			logger.debug("Fetching the list from a local file {}", TLD_NAMES_TXT_FILENAME);
 			try (InputStream tldFile = new FileInputStream(f)) {
@@ -65,6 +66,7 @@ public class TLDList {
 			}
 		}
 		try (InputStream tldFile = getClass().getClassLoader().getResourceAsStream(TLD_NAMES_TXT_FILENAME)) {
+			Log.e("TLD_NAMES_TXT_FILENAME>>>>"+tldFile);
 			int n = readStream(tldFile);
 			logger.info("Obtained {} TLD from packaged file {}", n, TLD_NAMES_TXT_FILENAME);
 		} catch (IOException e) {

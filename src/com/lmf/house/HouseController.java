@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.lmf.common.Log;
+import com.lmf.common.Utils;
 import com.lmf.house.db.HouseJsonDBManager;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
@@ -29,7 +30,7 @@ public class HouseController {
 		int politenessDelay = 100;
 
 		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(System.getProperty("user.dir") + crawlStorageFolder);
+		config.setCrawlStorageFolder(Utils.getLocalPath() + crawlStorageFolder);
 		// 页面深度
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 		// 页面个数
