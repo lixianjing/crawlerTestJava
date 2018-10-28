@@ -10,6 +10,7 @@ import java.util.List;
 
 import com.lmf.common.Log;
 import com.lmf.house.db.HouseJsonDBManager;
+import com.lmf.house.model.Salt;
 
 public class SaltUtils {
 	private static final long ONE_DAY = 24 * 60 * 60 * 1000;
@@ -17,14 +18,16 @@ public class SaltUtils {
 
 	public static List<String> readSalt() {
 		// from db
-		List<String> dblist = HouseJsonDBManager.selectSalt();
-		if (dblist.size() > MAX_DB_COUNT) {
+		List<String> dblist = HouseJsonDBManager.selectSalt(Salt.TYPE_PERSISTENT);
+		List<String> radomlist = HouseJsonDBManager.selectSalt(Salt.TYPE_TEMP);
+		if (radomlist.size() > MAX_DB_COUNT) {
 			HouseJsonDBManager.deleteSalt(System.currentTimeMillis() - ONE_DAY);
 		}
+		dblist.addAll(radomlist);
 		return dblist;
 	}
 
-	public static void insertSalt(String str) {
+	public static void insertSaltRandom(String str) {
 
 		if (str == null || str.length() == 0) {
 			return;
@@ -33,7 +36,7 @@ public class SaltUtils {
 			return;
 		}
 
-		HouseJsonDBManager.insertSalt(str);
+		HouseJsonDBManager.insertSalt(str, Salt.TYPE_TEMP);
 
 	}
 

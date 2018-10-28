@@ -26,7 +26,7 @@ public class HouseCrawler extends WebCrawler {
 	private static final String RESOURCE_TAG_JSON_BEGIN = "init({";
 	private static final String RESOURCE_TAG_JSON_END = "})";
 
-	public static long count = 0;
+	public static volatile int count = 0;
 
 	private Object lock = new Object();
 
@@ -71,22 +71,17 @@ public class HouseCrawler extends WebCrawler {
 			if (page.getParseData() instanceof HtmlParseData) {
 				count++;
 				HtmlParseData parseData = (HtmlParseData) page.getParseData();
-
-				CrawlerJsonModel model = new CrawlerJsonModel(parseData.getTitle(), url, parseData.getText());
-
 				HouseJsonModel houseModel = catchHouseJsonModel(gson, catchJson(catchData(parseData.getHtml())));
 				if (houseModel == null) {
+					CrawlerJsonModel model = new CrawlerJsonModel(parseData.getTitle(), url, parseData.getText());
 					model.status = CrawlerJsonModel.STATUS_ERROR;
+					HouseJsonDBManager.insertCrawler(model);
 					Log.e("error:" + model.url);
 				} else {
-					Log.i("done:" + model.url);
-					model.status = CrawlerJsonModel.STATUS_DONE;
+					Log.i("done:" + url);
+					HouseJsonDBManager.insertHouse(houseModel);
+					SaltUtils.insertSaltRandom(url);
 				}
-				HouseJsonDBManager.insertCrawler(model);
-				HouseJsonDBManager.insertHouse(houseModel);
-				SaltUtils.insertSalt(url);
-				// System.out.println("model:>>>>>>>>" + model.toString());
-				// System.out.println("houseModel:>>>>>>>>" + houseModel.toString());
 
 			}
 

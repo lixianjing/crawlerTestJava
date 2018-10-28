@@ -25,7 +25,7 @@ public class HouseController {
 
 		String crawlStorageFolder = "/data/crawl/root";
 		int numberOfCrawlers = 20;
-		int maxDepthOfCrawling = 500;
+		int maxDepthOfCrawling = 5000;
 		int maxPagesToFetch = 10000;
 		int politenessDelay = 100;
 
@@ -95,11 +95,6 @@ public class HouseController {
 		for (String str : list) {
 			controller.addSeed(str);
 		}
-		controller.addSeed(HouseConstant.SEED_URL_WEB);
-		for (int i = 2; i < 100; i++) {
-			controller.addSeed(HouseConstant.SEED_URL_WEB_PAGE + i + "/");
-		}
-
 	}
 
 	
