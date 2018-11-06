@@ -116,11 +116,13 @@ public class HouseJsonDBManager {
 		// "https://bj.lianjia.com/ershoufang/c1111027378568/?sug=%E5%A5%B6%E7%89%9B%E5%8E%82%E5%AE%BF%E8%88%8D",
 		// 1);
 		//
-		// insertSalt("https://bj.lianjia.com/ershoufang/", 1);
-		//
-		// for (int i = 54; i < 100; i++) {
-		// insertSalt(HouseConstant.SEED_URL_WEB_PAGE + i + "/", 1);
-		// }
+		
+		 insertSalt("https://bj.lianjia.com/ershoufang/l1l2ea95ep400/", 1);
+		insertSalt("https://bj.lianjia.com/ershoufang/aolinpikegongyuan11/l1l2ea95ep400/", 1);
+		insertSalt("https://bj.lianjia.com/ershoufang/tiancun1/bp0ep418ba0ea20000l1l2sf1/", 1);
+		insertSalt("https://bj.lianjia.com/ershoufang/xibeiwang/sf1l1l2ea20000ep418/", 1);
+		insertSalt("https://bj.lianjia.com/ershoufang/yangzhuang1/sf1l1l2ea20000ep418/", 1);
+		insertSalt("https://bj.lianjia.com/ershoufang/l1l2ea95ep400/", 1);
 
 		release();
 		System.out.println("done");
