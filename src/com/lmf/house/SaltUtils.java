@@ -14,7 +14,7 @@ import com.lmf.house.model.Salt;
 
 public class SaltUtils {
 	private static final long ONE_DAY = 24 * 60 * 60 * 1000;
-	private static final int MAX_DB_COUNT = 100;
+	private static final int MAX_DB_COUNT = 10;
 
 	public static List<String> readSalt() {
 		// from db
@@ -85,7 +85,7 @@ public class SaltUtils {
 	// }
 
 	public static boolean isAddsalt() {
-		if (System.currentTimeMillis() % 100 == 11) {
+		if (System.currentTimeMillis() % 100 == 1111) {
 			return true;
 		} else {
 			return false;

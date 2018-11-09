@@ -42,18 +42,31 @@ public class HouseCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
-
 		if (FILTERS.matcher(href).matches()) {
 			return false;
 		}
-
-		if ((href.endsWith("html")) && (href.startsWith(HouseConstant.SEED_URL_WEB))) {
-			return true;
+		if (href.contains("zufang")) {
+			return false;
+		}
+		if (href.contains("wenda")) {
+			return false;
 		}
 
-		if ((href.startsWith(HouseConstant.SEED_URL_WEB_PAGE))) {
+		if (href.contains("chengjiao")) {
+			return false;
+		}
+
+		if (href.startsWith("https://bj")) {
 			return true;
 		}
+		// if ((href.endsWith("html")) && (href.startsWith(HouseConstant.SEED_URL_WEB)))
+		// {
+		// return true;
+		// }
+		//
+		// if ((href.startsWith(HouseConstant.SEED_URL_WEB_PAGE))) {
+		// return true;
+		// }
 
 		return false;
 
@@ -65,9 +78,9 @@ public class HouseCrawler extends WebCrawler {
 	 */
 	@Override
 	public void visit(Page page) {
-		String url = checkUrl(page.getWebURL().getURL());
+		String url = isHouseUrl(page.getWebURL().getURL());
 		if (url != null) {
-			Log.i("URL: " + url);
+			Log.i("URL>house>>>: " + url);
 			if (page.getParseData() instanceof HtmlParseData) {
 				count++;
 				HtmlParseData parseData = (HtmlParseData) page.getParseData();
@@ -101,6 +114,16 @@ public class HouseCrawler extends WebCrawler {
 			if (str.endsWith("html")) {
 				return str;
 			}
+		}
+		return null;
+	}
+
+	private static String isHouseUrl(String str) {
+		if (str == null) {
+			return null;
+		}
+		if (str.contains(HouseConstant.ERSHOUFANG) && str.contains(HouseConstant.HTML)) {
+			return str;
 		}
 		return null;
 	}

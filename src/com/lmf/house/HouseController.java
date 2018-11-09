@@ -25,8 +25,8 @@ public class HouseController {
 
 		String crawlStorageFolder = "/data/crawl/root";
 		int numberOfCrawlers = 20;
-		int maxDepthOfCrawling = 5000;
-		int maxPagesToFetch = 10000;
+		int maxDepthOfCrawling = 1000;
+		int maxPagesToFetch = -1;
 		int politenessDelay = 100;
 
 		CrawlConfig config = new CrawlConfig();
