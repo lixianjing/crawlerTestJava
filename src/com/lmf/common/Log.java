@@ -13,7 +13,6 @@ import java.util.Date;
 public class Log {
 
 	private static final long MAX_BUFFER = 1024 * 1024;
-	private static final String PATH = "logs";
 
 	private static final SimpleDateFormat df = new SimpleDateFormat("yy_MM_dd_HH");
 	private static StringBuffer builder = new StringBuffer();
@@ -33,7 +32,7 @@ public class Log {
 
 	public static void init() {
 		try {
-			File file = new File(PATH);
+			File file = new File(Utils.getLocalPath() + "/logs");
 			if (!file.exists()) {
 				file.mkdirs();
 			}
@@ -68,7 +67,7 @@ public class Log {
 		}
 		RandomAccessFile raf = null;
 		try {
-			raf = new RandomAccessFile(PATH + "/" + file, "rw");
+			raf = new RandomAccessFile(Utils.getLocalPath() + "/logs/" + file, "rw");
 			long fileLength = raf.length();
 			raf.seek(fileLength);
 			raf.writeBytes(content);

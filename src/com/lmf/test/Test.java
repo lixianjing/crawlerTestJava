@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.google.gson.Gson;
 import com.lmf.common.Log;
+import com.lmf.common.Utils;
 import com.lmf.house.model.HouseJsonModel;
 
 public class Test {
@@ -39,26 +40,29 @@ public class Test {
 		writeSalt("sdf");
 		writeSalt("saa");
 		addSalt();
-//		String str="https://bj.lianjia.com/ershoufang/101103243713.html?is_sem=1";
-//		System.out.println(checkUrl(str));
-//		
-		
+		// String str="https://bj.lianjia.com/ershoufang/101103243713.html?is_sem=1";
+		// System.out.println(checkUrl(str));
+		//
+
 		// writeFile("test.txt","time:" + startTime+"\n");
 
-//		String str = readToString("resources/one");
-//
-//		System.out.println("111:" + str);
-//		System.out.println("222:" + catchData(str));
-//
-//		String json = catchJson(catchData(str));
-//		
-//		System.out.println("333:" + json);
-//		System.out.println("444:" + catchHouseJsonModel(gson, json));
+		// String str = readToString("resources/one");
+		//
+		// System.out.println("111:" + str);
+		// System.out.println("222:" + catchData(str));
+		//
+		// String json = catchJson(catchData(str));
+		//
+		// System.out.println("333:" + json);
+		// System.out.println("444:" + catchHouseJsonModel(gson, json));
+
+		Log.init();
+		Log.e("test" + Utils.getLocalPath());
+		Log.e("test");
+		Log.flush();
 
 	}
 
-	
-	
 	private static void writeSalt(String str) {
 		if (str == null || str.length() == 0) {
 			return;
@@ -70,10 +74,10 @@ public class Test {
 			// read file content from file
 			StringBuffer sb = new StringBuffer("");
 
-			writer = new FileWriter("resources/salt",true);
+			writer = new FileWriter("resources/salt", true);
 			bw = new BufferedWriter(writer);
 
-			bw.write(str+"\n");
+			bw.write(str + "\n");
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -97,19 +101,18 @@ public class Test {
 		}
 
 	}
-	
-	
+
 	private static String checkUrl(String str) {
-		if(str==null) {
+		if (str == null) {
 			return null;
 		}
-		int index=str.indexOf('?');
-		if(index>0) {
-			str=str.substring(0, index);
+		int index = str.indexOf('?');
+		if (index > 0) {
+			str = str.substring(0, index);
 		}
 		return str;
 	}
-	
+
 	public static void writeFile(String file, String content) {
 		System.out.println("content:" + content);
 		RandomAccessFile raf = null;
@@ -207,9 +210,7 @@ public class Test {
 		}
 		return null;
 	}
-	
-	
-	
+
 	private static List<String> addSalt() {
 		List<String> list = new ArrayList<String>();
 		// from file;
@@ -256,6 +257,5 @@ public class Test {
 		return list;
 
 	}
-	
 
 }

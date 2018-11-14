@@ -80,7 +80,6 @@ public class HouseCrawler extends WebCrawler {
 	public void visit(Page page) {
 		String url = isHouseUrl(page.getWebURL().getURL());
 		if (url != null) {
-			Log.i("URL>house>>>: " + url);
 			if (page.getParseData() instanceof HtmlParseData) {
 				count++;
 				HtmlParseData parseData = (HtmlParseData) page.getParseData();
@@ -89,9 +88,9 @@ public class HouseCrawler extends WebCrawler {
 					CrawlerJsonModel model = new CrawlerJsonModel(parseData.getTitle(), url, parseData.getText());
 					model.status = CrawlerJsonModel.STATUS_ERROR;
 					HouseJsonDBManager.insertCrawler(model);
-					Log.e("error:" + model.url);
+					Log.e(Thread.currentThread().getId()+" error:" + model.url);
 				} else {
-					Log.i("done:" + url);
+					Log.i(Thread.currentThread().getId()+" done:" + url);
 					HouseJsonDBManager.insertHouse(houseModel);
 					SaltUtils.insertSaltRandom(url);
 				}

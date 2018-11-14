@@ -26,7 +26,7 @@ public class HouseController {
 		String crawlStorageFolder = "/data/crawl/root";
 		int numberOfCrawlers = 20;
 		int maxDepthOfCrawling = 1000;
-		int maxPagesToFetch = -1;
+		int maxPagesToFetch = 1000000;
 		int politenessDelay = 100;
 
 		CrawlConfig config = new CrawlConfig();
@@ -52,16 +52,19 @@ public class HouseController {
 		 * are fetched and then the crawler starts following links which are found in
 		 * these pages
 		 */
-
-		addSeed(controller);
-
-		/*
-		 * Start the crawl. This is a blocking operation, meaning that your code will
-		 * reach the line after this only when crawling is finished.
-		 */
-		controller.start(HouseCrawler.class, numberOfCrawlers);
+		try {
+			addSeed(controller);
+			/*
+			 * Start the crawl. This is a blocking operation, meaning that your code will
+			 * reach the line after this only when crawling is finished.
+			 */
+			controller.start(HouseCrawler.class, numberOfCrawlers);
+		} catch (Exception e) {
+			Log.e(e.getMessage());
+		}
 
 		onDestory();
+		System.exit(0);
 	}
 
 	private static long startStamp = 0;
@@ -71,6 +74,7 @@ public class HouseController {
 		startStamp = System.currentTimeMillis();
 		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
+		Log.init();
 		Log.e("<<<<<<<<<<");
 		Log.e("start crawler:" + startTime);
 		HouseJsonDBManager.init();
@@ -83,6 +87,7 @@ public class HouseController {
 		HouseJsonDBManager.release();
 		Log.e(">>>>>>>>>>");
 		Log.flush();
+	
 	}
 
 	/*
@@ -97,6 +102,4 @@ public class HouseController {
 		}
 	}
 
-	
-	
 }
