@@ -1,5 +1,6 @@
 package com.lmf.house;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ public class HouseCrawler extends WebCrawler {
 	private static final String RESOURCE_TAG_JSON_END = "})";
 
 	public static volatile int count = 0;
+	public static Set<String> houseIdSet=new HashSet<String>();
 
 	private Object lock = new Object();
 
@@ -53,6 +55,10 @@ public class HouseCrawler extends WebCrawler {
 		}
 
 		if (href.contains("chengjiao")) {
+			return false;
+		}
+		
+		if (href.contains("bj.ke.com")) {
 			return false;
 		}
 
@@ -91,6 +97,11 @@ public class HouseCrawler extends WebCrawler {
 					Log.e(Thread.currentThread().getId()+" error:" + model.url);
 				} else {
 					Log.i(Thread.currentThread().getId()+" done:" + url);
+					if(houseIdSet.contains(houseModel.houseId)) {
+						Log.i(Thread.currentThread().getId()+" repeat:" + url);
+						return;
+					}
+					houseIdSet.add(houseModel.houseId);
 					HouseJsonDBManager.insertHouse(houseModel);
 					SaltUtils.insertSaltRandom(url);
 				}
