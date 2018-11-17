@@ -58,9 +58,9 @@ public class HouseCrawler extends WebCrawler {
 			return false;
 		}
 		
-		if (href.contains("bj.ke.com")) {
-			return false;
-		}
+//		if (href.contains("bj.ke.com")) {
+//			return false;
+//		}
 
 		if (href.startsWith("https://bj")) {
 			return true;
@@ -156,18 +156,28 @@ public class HouseCrawler extends WebCrawler {
 		return null;
 	}
 
-	private String catchJson(String rource) {
+	private static String catchJson(String rource) {
 		if (rource == null) {
 			return null;
 		}
 		try {
 			int begin = rource.lastIndexOf(RESOURCE_TAG_JSON_BEGIN);
-
 			if (begin > 0) {
 				int end = rource.indexOf(RESOURCE_TAG_JSON_END, begin);
-
 				if (end > 0) {
-					return rource.substring(begin + RESOURCE_TAG_JSON_BEGIN.length() - 1, end + 1);
+					String resource = rource.substring(begin + RESOURCE_TAG_JSON_BEGIN.length() - 1, end + 1);
+					for (int i = 2; i < 20; i++) {
+						char c = resource.charAt(resource.length() - i);
+						if (c == ' ' || c == '\n' || c == '\t') {
+							continue;
+						} else {
+							if (c == ',') {
+								return resource.substring(0, resource.length() - i)+"}";
+							}
+							break;
+						}
+					}
+					return resource;
 				}
 			}
 		} catch (Exception e) {

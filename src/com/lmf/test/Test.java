@@ -27,39 +27,23 @@ import com.lmf.house.model.HouseJsonModel;
 public class Test {
 
 	public static void main(String[] args) throws Exception {
-
+		cleanCrawler("com.lmf.test.Test");
 		System.out.println("hello world" + System.getProperty("user.dir"));
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
 		Gson gson = new Gson();
 		System.out.println("hello world:" + gson);
-		// Log.init();
-		// Log.e("eset");
-		// Log.e("xxx");
-		// Log.flush();
-		writeSalt("sdf");
-		writeSalt("saa");
-		addSalt();
-		// String str="https://bj.lianjia.com/ershoufang/101103243713.html?is_sem=1";
-		// System.out.println(checkUrl(str));
-		//
 
-		// writeFile("test.txt","time:" + startTime+"\n");
+		Thread.sleep(30 * 1000);
 
-		// String str = readToString("resources/one");
-		//
-		// System.out.println("111:" + str);
-		// System.out.println("222:" + catchData(str));
-		//
-		// String json = catchJson(catchData(str));
-		//
-		// System.out.println("333:" + json);
-		// System.out.println("444:" + catchHouseJsonModel(gson, json));
+		String str = readToString("resources/all_ke");
 
-		Log.init();
-		Log.e("test" + Utils.getLocalPath());
-		Log.e("test");
-		Log.flush();
+//		String data = catchData(str);
+//		String json = catchJson(data);
+//		System.out.println("hello json:" + json);
+//		HouseJsonModel houseModel = catchHouseJsonModel(gson, json);
+//
+//		System.out.println("hello world:" + houseModel);
 
 	}
 
@@ -170,10 +154,8 @@ public class Test {
 		}
 		try {
 			int begin = rource.lastIndexOf(RESOURCE_TAG_INDEX);
-			System.out.println("begin:" + begin);
 			if (begin > 0) {
 				int end = rource.indexOf(RESOURCE_TAG_END, begin);
-				System.out.println("end:" + end);
 				if (end > 0) {
 					return rource.substring(begin, end);
 				}
@@ -195,13 +177,62 @@ public class Test {
 				int end = rource.indexOf(RESOURCE_TAG_JSON_END, begin);
 				System.out.println("end:" + end);
 				if (end > 0) {
-					return rource.substring(begin + RESOURCE_TAG_JSON_BEGIN.length() - 1, end + 1);
+					String resource = rource.substring(begin + RESOURCE_TAG_JSON_BEGIN.length() - 1, end + 1);
+					for (int i = 2; i < 20; i++) {
+						char c = resource.charAt(resource.length() - i);
+						if (c == ' ' || c == '\n' || c == '\t') {
+							continue;
+						} else {
+							if (c == ',') {
+								return resource.substring(0, resource.length() - i) + "}";
+							}
+							break;
+						}
+					}
+					return resource;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private static void cleanCrawler(String key) {
+		try {
+			Process pid = Runtime.getRuntime().exec("ps -ef");
+			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
+
+			String line = null;
+			List<String> pidList=new ArrayList<String>();
+
+			while ((line = br.readLine()) != null) {
+				if(line!=null&&line.contains(key)) {
+					String strs[]=line.trim().split("  ");
+//					for(String str:strs) {
+//						System.out.println("str>>"+str);
+//					}
+//					System.out.println(line);	
+					
+					if(strs.length>2) {
+						System.out.println(strs[1]);
+						pidList.add(strs[1]);
+					}
+				}
+			}
+			if(pidList.size()>0) {
+				pidList.remove(pidList.size()-1);
+			}
+			
+			for(String str:pidList) {
+				Runtime.getRuntime().exec("kill -9 "+str);
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private static HouseJsonModel catchHouseJsonModel(Gson gson, String json) {
@@ -209,53 +240,6 @@ public class Test {
 			return gson.fromJson(json, HouseJsonModel.class);
 		}
 		return null;
-	}
-
-	private static List<String> addSalt() {
-		List<String> list = new ArrayList<String>();
-		// from file;
-		FileReader reader = null;
-		BufferedReader br = null;
-		String str = null;
-		try {
-			// read file content from file
-			StringBuffer sb = new StringBuffer("");
-
-			reader = new FileReader("resources/salt");
-			br = new BufferedReader(reader);
-
-			while ((str = br.readLine()) != null) {
-				list.add(str);
-				System.out.println(str);
-			}
-			br.close();
-			reader.close();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		// from db
-
-		return list;
-
 	}
 
 }
