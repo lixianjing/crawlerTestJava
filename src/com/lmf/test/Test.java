@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.lang.management.ManagementFactory;
 import java.net.URLClassLoader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,18 +33,22 @@ public class Test {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
 		Gson gson = new Gson();
-		System.out.println("hello world:" + gson);
+
+String name = ManagementFactory.getRuntimeMXBean().getName(); 
+
+String pid = name.split("@")[0];  
+		System.out.println("pid:" + pid);
 
 		Thread.sleep(30 * 1000);
 
 		String str = readToString("resources/all_ke");
 
-//		String data = catchData(str);
-//		String json = catchJson(data);
-//		System.out.println("hello json:" + json);
-//		HouseJsonModel houseModel = catchHouseJsonModel(gson, json);
-//
-//		System.out.println("hello world:" + houseModel);
+		// String data = catchData(str);
+		// String json = catchJson(data);
+		// System.out.println("hello json:" + json);
+		// HouseJsonModel houseModel = catchHouseJsonModel(gson, json);
+		//
+		// System.out.println("hello world:" + houseModel);
 
 	}
 
@@ -198,34 +203,49 @@ public class Test {
 		return null;
 	}
 
+	
+	
+	
+	
 	private static void cleanCrawler(String key) {
 		try {
 			Process pid = Runtime.getRuntime().exec("ps -ef");
 			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
 
 			String line = null;
-			List<String> pidList=new ArrayList<String>();
+			List<String> pidList = new ArrayList<String>();
 
 			while ((line = br.readLine()) != null) {
-				if(line!=null&&line.contains(key)) {
-					String strs[]=line.trim().split("  ");
-//					for(String str:strs) {
-//						System.out.println("str>>"+str);
-//					}
-//					System.out.println(line);	
-					
-					if(strs.length>2) {
-						System.out.println(strs[1]);
-						pidList.add(strs[1]);
+				if (line != null && line.contains(key)) {
+					String target = line.trim();
+					int index = target.indexOf(" ");
+					char c;
+					int end = 0;
+					if (index > 0) {
+						target = target.substring(index);
+						target = target.trim();
+						for (int i = 0; i < target.length(); i++) {
+							c = target.charAt(i);
+							if (c == ' ' || c == '\n' || c == '\t') {
+								end = i;
+								break;
+							}
+						}
+					}
+
+					if (end > 0) {
+						System.out.println(target.substring(0, end));
+						pidList.add(target.substring(0, end));
 					}
 				}
 			}
-			if(pidList.size()>0) {
-				pidList.remove(pidList.size()-1);
+			if (pidList.size() > 0) {
+				pidList.remove(pidList.size() - 1);
 			}
-			
-			for(String str:pidList) {
-				Runtime.getRuntime().exec("kill -9 "+str);
+
+			for (String str : pidList) {
+				Log.e(">>>>>>cleanCrawler>>>>"+pidList);
+				Runtime.getRuntime().exec("kill -9 " + str);
 			}
 
 		} catch (IOException e) {

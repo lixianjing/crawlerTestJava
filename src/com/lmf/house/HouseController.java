@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -89,31 +90,52 @@ public class HouseController {
 		HouseJsonDBManager.release();
 		Log.e(">>>>>>>>>>");
 		Log.flush();
-	
+
 	}
+
 	private static void cleanCrawler(String key) {
 		try {
+			String name = ManagementFactory.getRuntimeMXBean().getName();
+			String mPid = name.split("@")[0];
+			Log.e(">>>>>>mPid>>>>" + mPid);
 			Process pid = Runtime.getRuntime().exec("ps -ef");
-			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 2048);
+			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
 
 			String line = null;
-			List<String> pidList=new ArrayList<String>();
+			List<String> pidList = new ArrayList<String>();
 
 			while ((line = br.readLine()) != null) {
-				if(line!=null&&line.contains(key)) {
-					String strs[]=line.trim().split("  ");
-					if(strs.length>2) {
-						Log.e("current pid:"+strs[1]);
-						pidList.add(strs[1]);
+				if (line != null && line.contains(key)) {
+					String target = line.trim();
+					int index = target.indexOf(" ");
+					char c;
+					int end = 0;
+					if (index > 0) {
+						target = target.substring(index);
+						target = target.trim();
+						for (int i = 0; i < target.length(); i++) {
+							c = target.charAt(i);
+							if (c == ' ' || c == '\n' || c == '\t') {
+								end = i;
+								break;
+							}
+						}
+					}
+
+					if (end > 0) {
+						String str = target.substring(0, end);
+						Log.e(">>>>>>pid>>>>" + str);
+						if (str != null && !str.equals(mPid)) {
+							pidList.add(str);
+						}
+
 					}
 				}
 			}
-			if(pidList.size()>0) {
-				pidList.remove(pidList.size()-1);
-			}
-			
-			for(String str:pidList) {
-				Runtime.getRuntime().exec("kill -9 "+str);
+		
+			for (String str : pidList) {
+				Log.e(">>>>>>cleanCrawler>>>>" + pidList);
+				Runtime.getRuntime().exec("kill -9 " + str);
 			}
 
 		} catch (IOException e) {
@@ -122,7 +144,7 @@ public class HouseController {
 		}
 
 	}
-	
+
 	/*
 	 * For each crawl, you need to add some seed urls. These are the first URLs that
 	 * are fetched and then the crawler starts following links which are found in
