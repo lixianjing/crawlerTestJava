@@ -1,9 +1,15 @@
 package com.lmf.house;
 
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import com.google.gson.Gson;
 import com.lmf.common.Log;
+import com.lmf.house.db.HouseJsonDBManager;
+import com.lmf.house.model.CrawlerJsonModel;
+import com.lmf.house.model.HouseJsonModel;
 
 import edu.uci.ics.crawler4j.crawler.Page;
 import edu.uci.ics.crawler4j.crawler.WebCrawler;
@@ -15,8 +21,14 @@ public class HouseCrawler extends WebCrawler {
 	private final static Pattern FILTERS = Pattern
 			.compile(".*(\\.(css|js|bmp|gif|jpg|jpeg|ico" + "|png|tiff|mid|mp2|mp3|mp4"
 					+ "|wav|avi|mov|mpeg|ram|m4v|pdf" + "xml" + "|rm|smil|wmv|swf|wma|zip|rar|gz))$");
+	private static final Gson gson = new Gson();
+	private static final String RESOURCE_TAG_INDEX = "require(['ershoufang/sellDetail/detailV3']";
+	private static final String RESOURCE_TAG_END = "</script>";
+	private static final String RESOURCE_TAG_JSON_BEGIN = "init({";
+	private static final String RESOURCE_TAG_JSON_END = "})";
 
-	public static long count = 0;
+	public static volatile int count = 0;
+	public static Set<String> houseIdSet=new HashSet<String>();
 
 	private Object lock = new Object();
 
@@ -32,18 +44,35 @@ public class HouseCrawler extends WebCrawler {
 	@Override
 	public boolean shouldVisit(Page referringPage, WebURL url) {
 		String href = url.getURL().toLowerCase();
-
 		if (FILTERS.matcher(href).matches()) {
 			return false;
 		}
-
-		if ((href.endsWith("html")) && (href.startsWith(HouseConstant.SEED_URL_WEB))) {
-			return true;
+		if (href.contains("zufang")) {
+			return false;
+		}
+		if (href.contains("wenda")) {
+			return false;
 		}
 
-		if ((href.startsWith(HouseConstant.SEED_URL_WEB_PAGE))) {
+		if (href.contains("chengjiao")) {
+			return false;
+		}
+		
+//		if (href.contains("bj.ke.com")) {
+//			return false;
+//		}
+
+		if (href.startsWith("https://bj")) {
 			return true;
 		}
+		// if ((href.endsWith("html")) && (href.startsWith(HouseConstant.SEED_URL_WEB)))
+		// {
+		// return true;
+		// }
+		//
+		// if ((href.startsWith(HouseConstant.SEED_URL_WEB_PAGE))) {
+		// return true;
+		// }
 
 		return false;
 
@@ -55,98 +84,113 @@ public class HouseCrawler extends WebCrawler {
 	 */
 	@Override
 	public void visit(Page page) {
-		String url = page.getWebURL().getURL();
-		if ((url.endsWith("html")) && (url.startsWith(HouseConstant.SEED_URL_WEB))) {
-			Log.i("URL: " + url);
+		String url = isHouseUrl(page.getWebURL().getURL());
+		if (url != null) {
 			if (page.getParseData() instanceof HtmlParseData) {
 				count++;
+				HtmlParseData parseData = (HtmlParseData) page.getParseData();
+				HouseJsonModel houseModel = catchHouseJsonModel(gson, catchJson(catchData(parseData.getHtml())));
+				if (houseModel == null) {
+					CrawlerJsonModel model = new CrawlerJsonModel(parseData.getTitle(), url, parseData.getText());
+					model.status = CrawlerJsonModel.STATUS_ERROR;
+					HouseJsonDBManager.insertCrawler(model);
+					Log.e(Thread.currentThread().getId()+" error:" + model.url);
+				} else {
+					Log.i(Thread.currentThread().getId()+" done:" + url);
+					if(houseIdSet.contains(houseModel.houseId)) {
+						Log.i(Thread.currentThread().getId()+" repeat:" + url);
+						return;
+					}
+					houseIdSet.add(houseModel.houseId);
+					HouseJsonDBManager.insertHouse(houseModel);
+					SaltUtils.insertSaltRandom(url);
+				}
 
-//				HtmlParseData htmlParseData = (HtmlParseData) page.getParseData();
-//				String html = htmlParseData.getHtml();
-//				String text = htmlParseData.getText();
-//				System.out.println("html:" + html);
-//				System.out.println("text:" + text);
-//				try {
-//					int i = html.indexOf("<!-- 房屋相关信息 -->");
-//					if (i > 0) {
-//						html = html.substring(i, i + 1500);
-//						html = html.replaceAll("&nbsp;", "");
-//						i = html.indexOf("</dl></div>");
-//						if (i > 0) {
-//							html = html.substring(0, i + 11);
-//							html = html + "</div>";
-//						}
-//					}
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-				//
-//				HouseInfo info = manager.getHouseInfo(url, htmlParseData.getTitle(), html);
-//				if (info != null) {
-				//
-//					HousePrice housePrice = HouseDBManager.getHousePrice(info.hid);
-				//
-//					if (housePrice == null) {
-//						// insert
-//						int id = HouseDBManager.insert(info);
-//						if (id > 0) {
-//							housePrice = new HousePrice();
-//							housePrice.hid = info.hid;
-//							housePrice.priceNew = info.price;
-//							housePrice.priceOld = "";
-//							housePrice.price_status = HousePrice.PRICE_STATUS_DEFAULT;
-//							housePrice.house_price_info = info.price;
-//							housePrice.update_id = HouseDBManager.getPriceInfoId(info.url);
-//							housePrice.url = info.url;
-//							housePrice.size = info.size;
-//							housePrice.title = info.title;
-//							housePrice.address = info.address;
-//							housePrice.house_type = info.houseType;
-//							housePrice.house_direct = info.houseDirect;
-//							housePrice.house_height = info.houseHeight;
-//							housePrice.stamp = System.currentTimeMillis() / 1000;
-//							HouseDBManager.insertHousePrice(housePrice);
-//						}
-//					} else {
-//						if (housePrice.priceNew == null) {
-//							int id = HouseDBManager.insert(info);
-//							if (id > 0) {
-//								housePrice.hid = info.hid;
-//								housePrice.priceNew = info.price;
-//								housePrice.priceOld = "";
-//								housePrice.price_status = HousePrice.PRICE_STATUS_DEFAULT;
-//								housePrice.house_price_info = info.price;
-//								housePrice.update_id = HouseDBManager.getPriceInfoId(info.url);
-//								housePrice.url = info.url;
-//								housePrice.size = info.size;
-//								housePrice.title = info.title;
-//								housePrice.address = info.address;
-//								housePrice.house_type = info.houseType;
-//								housePrice.house_direct = info.houseDirect;
-//								housePrice.house_height = info.houseHeight;
-//								housePrice.stamp = System.currentTimeMillis() / 1000;
-//								HouseDBManager.updatePriceInfo(housePrice);
-//							}
-//						} else if (!housePrice.priceNew.equals(info.price)) {
-//							int id = HouseDBManager.insert(info);
-//							if (id > 0) {
-//								housePrice.update_id = HouseDBManager.getPriceInfoId(info.url);
-//								housePrice.priceOld = new String(housePrice.priceNew);
-//								housePrice.priceNew = info.price;
-//								housePrice.stamp = System.currentTimeMillis() / 1000;
-//								housePrice.house_price_info = housePrice.house_price_info == null ? ""
-//										: housePrice.house_price_info + "," + info.price;
-//								HouseDBManager.updatePriceInfo(housePrice);
-//							}
-//						}
-				//
-//					}
-				//
-//				}
-				//
 			}
 
 		}
 
 	}
+
+	private static String checkUrl(String str) {
+		if (str == null) {
+			return null;
+		}
+		if ((str.startsWith(HouseConstant.SEED_URL_WEB))) {
+			int index = str.indexOf('?');
+			if (index > 0) {
+				str = str.substring(0, index);
+			}
+			if (str.endsWith("html")) {
+				return str;
+			}
+		}
+		return null;
+	}
+
+	private static String isHouseUrl(String str) {
+		if (str == null) {
+			return null;
+		}
+		if (str.contains(HouseConstant.ERSHOUFANG) && str.contains(HouseConstant.HTML)) {
+			return str;
+		}
+		return null;
+	}
+
+	private String catchData(String rource) {
+		if (rource == null) {
+			return null;
+		}
+		try {
+			int begin = rource.lastIndexOf(RESOURCE_TAG_INDEX);
+			if (begin > 0) {
+				int end = rource.indexOf(RESOURCE_TAG_END, begin);
+				if (end > 0) {
+					return rource.substring(begin, end);
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static String catchJson(String rource) {
+		if (rource == null) {
+			return null;
+		}
+		try {
+			int begin = rource.lastIndexOf(RESOURCE_TAG_JSON_BEGIN);
+			if (begin > 0) {
+				int end = rource.indexOf(RESOURCE_TAG_JSON_END, begin);
+				if (end > 0) {
+					String resource = rource.substring(begin + RESOURCE_TAG_JSON_BEGIN.length() - 1, end + 1);
+					for (int i = 2; i < 20; i++) {
+						char c = resource.charAt(resource.length() - i);
+						if (c == ' ' || c == '\n' || c == '\t') {
+							continue;
+						} else {
+							if (c == ',') {
+								return resource.substring(0, resource.length() - i)+"}";
+							}
+							break;
+						}
+					}
+					return resource;
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private HouseJsonModel catchHouseJsonModel(Gson gson, String json) {
+		if (json != null) {
+			return gson.fromJson(json, HouseJsonModel.class);
+		}
+		return null;
+	}
+
 }

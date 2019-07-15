@@ -12,4 +12,11 @@ public class Utils {
 		}
 		return 0;
 	}
+
+	
+
+	public static String getLocalPath() {
+		// TODO Auto-generated method stub
+		return System.getProperty("user.dir");
+	}
 }

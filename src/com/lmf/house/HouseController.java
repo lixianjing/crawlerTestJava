@@ -1,9 +1,20 @@
 package com.lmf.house;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.lmf.common.Log;
+import com.lmf.common.Utils;
+import com.lmf.house.db.HouseJsonDBManager;
 
 import edu.uci.ics.crawler4j.crawler.CrawlConfig;
 import edu.uci.ics.crawler4j.crawler.CrawlController;
@@ -16,19 +27,20 @@ public class HouseController {
 
 		String crawlStorageFolder = "/data/crawl/root";
 		int numberOfCrawlers = 20;
-		int maxDepthOfCrawling = 500;
-		int maxPagesToFetch = 10000;
-		int politenessDelay = 100;
+		int maxDepthOfCrawling = 1000;
+		int maxPagesToFetch = 10000000;
+		int politenessDelay = 50;
 
 		CrawlConfig config = new CrawlConfig();
-		config.setCrawlStorageFolder(crawlStorageFolder);
-		// 设置搜索深度
+		config.setCrawlStorageFolder(Utils.getLocalPath() + crawlStorageFolder);
+		// 椤甸潰娣卞害
 		config.setMaxDepthOfCrawling(maxDepthOfCrawling);
-		// 设置搜索文件个数
+		// 椤甸潰涓暟
 		config.setMaxPagesToFetch(maxPagesToFetch);
-		// 延迟策略
+		// 寤惰繜绛栫暐
 		config.setPolitenessDelay(politenessDelay);
 		onCreate();
+
 		/*
 		 * Instantiate the controller for this crawl.
 		 */
@@ -42,15 +54,19 @@ public class HouseController {
 		 * are fetched and then the crawler starts following links which are found in
 		 * these pages
 		 */
+		try {
+			addSeed(controller);
+			/*
+			 * Start the crawl. This is a blocking operation, meaning that your code will
+			 * reach the line after this only when crawling is finished.
+			 */
+			controller.start(HouseCrawler.class, numberOfCrawlers);
+		} catch (Exception e) {
+			Log.e(e.getMessage());
+		}
 
-		addSeed(controller);
-
-		/*
-		 * Start the crawl. This is a blocking operation, meaning that your code will
-		 * reach the line after this only when crawling is finished.
-		 */
-		controller.start(HouseCrawler.class, numberOfCrawlers);
 		onDestory();
+		System.exit(0);
 	}
 
 	private static long startStamp = 0;
@@ -58,20 +74,75 @@ public class HouseController {
 
 	private static void onCreate() {
 		startStamp = System.currentTimeMillis();
-		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// 设置日期格式
+		df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String startTime = df.format(new Date());
+		Log.init();
 		Log.e("<<<<<<<<<<");
-		Log.e("start crawler:" + startTime);// new Date()为获取当前系统时间
-//		HouseDBManager.init();
+		cleanCrawler("crawlerTestJava");
+		Log.e("start crawler:" + startTime);
+		HouseJsonDBManager.init();
 	}
 
 	private static void onDestory() {
 		long spendTime = System.currentTimeMillis() - startStamp;
 		String endTime = df.format(new Date());
 		Log.e("end crawler:" + endTime + ",spend:" + spendTime / 1000 / 60 + "min,total visit:" + HouseCrawler.count);
-//		HouseDBManager.release();
+		HouseJsonDBManager.release();
 		Log.e(">>>>>>>>>>");
 		Log.flush();
+
+	}
+
+	private static void cleanCrawler(String key) {
+		try {
+			String name = ManagementFactory.getRuntimeMXBean().getName();
+			String mPid = name.split("@")[0];
+			Log.e(">>>>>>mPid>>>>" + mPid);
+			Process pid = Runtime.getRuntime().exec("ps -ef");
+			BufferedReader br = new BufferedReader(new InputStreamReader(pid.getInputStream()), 1024);
+
+			String line = null;
+			List<String> pidList = new ArrayList<String>();
+
+			while ((line = br.readLine()) != null) {
+				if (line != null && line.contains(key)) {
+					String target = line.trim();
+					int index = target.indexOf(" ");
+					char c;
+					int end = 0;
+					if (index > 0) {
+						target = target.substring(index);
+						target = target.trim();
+						for (int i = 0; i < target.length(); i++) {
+							c = target.charAt(i);
+							if (c == ' ' || c == '\n' || c == '\t') {
+								end = i;
+								break;
+							}
+						}
+					}
+
+					if (end > 0) {
+						String str = target.substring(0, end);
+						Log.e(">>>>>>pid>>>>" + str);
+						if (str != null && !str.equals(mPid)) {
+							pidList.add(str);
+						}
+
+					}
+				}
+			}
+		
+			for (String str : pidList) {
+				Log.e(">>>>>>cleanCrawler>>>>" + pidList);
+				Runtime.getRuntime().exec("kill -9 " + str);
+			}
+
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	/*
@@ -80,10 +151,10 @@ public class HouseController {
 	 * these pages
 	 */
 	private static void addSeed(CrawlController controller) {
-		controller.addSeed(HouseConstant.SEED_URL_WEB);
-		for (int i = 2; i < 100; i++) {
-			controller.addSeed(HouseConstant.SEED_URL_WEB_PAGE + i + "/");
+		List<String> list = SaltUtils.readSalt();
+		for (String str : list) {
+			controller.addSeed(str);
 		}
-
 	}
+
 }

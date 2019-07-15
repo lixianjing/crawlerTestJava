@@ -1,4 +1,4 @@
-target/
+Itarget/
 .DS_STORE
 .idea/*
 *.iml
@@ -8,3 +8,4 @@ javadocs/*
 .project
 logs/
 /bin/
+data/
